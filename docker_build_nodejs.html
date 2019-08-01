@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!-- saved from url=(0058)https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/ -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>把一个 Node.js web 应用程序给 Docker 化 | Node.js</title>
+
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com/">
+
+  <meta name="author" content="Node.js 基金会">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Node.js® is a JavaScript runtime built on Chrome&#39;s V8 JavaScript engine.">
+
+  <link rel="apple-touch-icon" href="https://nodejs.org/static/apple-touch-icon.png">
+  <link rel="icon" sizes="32x32" type="image/png" href="https://nodejs.org/static/favicon.png">
+
+  <meta property="og:site_name" content="Node.js">
+  <meta property="og:title" content="把一个 Node.js web 应用程序给 Docker 化 | Node.js">
+  <meta property="og:image" content="https://nodejs.org/static/images/logo-hexagon-card.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="224">
+  <meta property="og:image:height" content="256">
+  <meta property="og:description" content="Node.js® is a JavaScript runtime built on Chrome&#39;s V8 JavaScript engine.">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@nodejs">
+  <meta name="twitter:title" content="把一个 Node.js web 应用程序给 Docker 化 | Node.js">
+  <meta name="twitter:image" content="https://nodejs.org/static/images/logo-hexagon-card.png">
+  <meta name="twitter:image:alt" content="The Node.js Hexagon Logo">
+
+  <link rel="canonical" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/">
+  <link rel="alternate" href="https://nodejs.org/zh-cn/feed/blog.xml" title="Node.js 博客" type="application/rss+xml">
+  <link rel="alternate" href="https://nodejs.org/zh-cn/feed/releases.xml" title="Node.js 博客: 发布" type="application/rss+xml">
+  <link rel="alternate" href="https://nodejs.org/zh-cn/feed/vulnerability.xml" title="Node.js 博客: 安全报告" type="application/rss+xml">
+  <link rel="stylesheet" href="./docker_build_nodejs_files/styles.css" media="all">
+  <link rel="stylesheet" href="./docker_build_nodejs_files/css">
+</head>
+
+<body>
+  <header>
+    <div class="container">
+  
+      <a href="https://nodejs.org/zh-cn/" id="logo">
+        <img src="./docker_build_nodejs_files/logo.svg" alt="node.js">
+      </a>
+  
+      <nav>
+        <ul class="list-divider-pipe">
+          <li>
+            <a href="https://nodejs.org/zh-cn/">首页</a>
+          </li>
+  
+            <li>
+                <a href="https://nodejs.org/zh-cn/about/">关于</a>
+            </li>
+            <li>
+                <a href="https://nodejs.org/zh-cn/download/">下载</a>
+            </li>
+            <li class="active">
+                <a href="https://nodejs.org/zh-cn/docs/">文档</a>
+            </li>
+            <li>
+                <a href="https://nodejs.org/zh-cn/get-involved/">加入我们</a>
+            </li>
+            <li>
+                <a href="https://nodejs.org/zh-cn/security/">安全</a>
+            </li>
+            <li>
+                <a href="https://nodejs.org/zh-cn/blog/">新闻</a>
+            </li>
+            <li class="nav-foundation">
+                <a href="https://foundation.nodejs.org/">基金会</a>
+            </li>
+        </ul>
+      </nav>
+  
+      <svg id="lang-picker-toggler" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path d="M217.982 201.586h-64.499c-5.537 0-10.026 4.489-10.026 10.026s4.489 10.026 10.026 10.026h53.547c-4.72 25.263-26.935 44.446-53.547 44.446-30.037 0-54.473-24.436-54.473-54.473s24.436-54.473 54.473-54.473c14.55 0 28.229 5.667 38.518 15.955 3.916 3.916 10.264 3.916 14.178 0 3.916-3.916 3.916-10.264 0-14.178-14.077-14.077-32.791-21.829-52.697-21.829-41.094 0-74.525 33.431-74.525 74.525 0 41.094 33.431 74.525 74.525 74.525s74.525-33.431 74.525-74.525c.001-5.536-4.488-10.025-10.025-10.025z"></path>
+        <path d="M470.331 92.24H269.728l-26.935-81.355a10.025 10.025 0 0 0-9.518-6.875H41.669C18.693 4.01 0 22.703 0 45.679v332.412c0 22.976 18.693 41.669 41.669 41.669h203.145l27.073 81.369a10.026 10.026 0 0 0 9.513 6.861h188.932c22.976 0 41.669-18.693 41.669-41.669V133.909c-.001-22.976-18.694-41.669-41.67-41.669zM41.669 399.708c-11.919 0-21.616-9.697-21.616-21.616V45.679c0-11.919 9.697-21.616 21.616-21.616h184.364l70.691 213.516a.366.366 0 0 0 .015.043l53.664 162.086H41.669zm295.78-116.433c.805 1.11 10.824 14.877 26.355 34.066-4.377 5.756-9.015 11.474-13.91 17.036l-29.712-89.74h87.441c-6.196 13.031-16.938 33.813-31.692 55.736-13.553-16.921-22.069-28.622-22.249-28.87-3.251-4.482-9.519-5.481-14.002-2.23-4.482 3.25-5.48 9.518-2.231 14.002zM265.946 419.76h75.162l-55.503 59.084-19.659-59.084zm226.002 46.561c0 11.919-9.697 21.616-21.616 21.616H304.575l67.015-71.339-.004-.003c.293-.312.571-.64.823-.991a10.025 10.025 0 0 0 1.39-9.022l-16.688-50.402c7.073-7.406 13.68-15.143 19.805-22.965 13.299 15.772 29.037 33.446 45.778 50.187 1.957 1.957 4.524 2.937 7.089 2.937s5.132-.979 7.089-2.937c3.916-3.916 3.916-10.264 0-14.178-17.461-17.461-34.013-36.244-47.687-52.632 21.251-30.503 35.033-59.504 40.535-71.954h21.454c5.537 0 10.026-4.489 10.026-10.026s-4.489-10.026-10.026-10.026h-66.173v-18.047c0-5.537-4.489-10.026-10.026-10.026s-10.026 4.489-10.026 10.026v18.046h-51.406l-37.178-112.292H470.33c11.919 0 21.616 9.697 21.616 21.616v332.412z"></path>
+      </svg>
+  
+      <div class="lang-picker hidden">
+        <ul>
+            <li data-lang="ar" title="Arabic">
+              العربية
+            </li>
+            <li data-lang="ca" title="Catalan">
+              Catalan
+            </li>
+            <li data-lang="de" title="German">
+              Deutsch
+            </li>
+            <li data-lang="en" title="English">
+              English
+            </li>
+            <li data-lang="es" title="Spanish">
+              Español
+            </li>
+            <li data-lang="fa" title="Persian">
+              زبان فارسی
+            </li>
+            <li data-lang="fr" title="French">
+              Français
+            </li>
+            <li data-lang="gl" title="Galician">
+              Galego
+            </li>
+            <li data-lang="it" title="Italian">
+              Italiano
+            </li>
+            <li data-lang="ja" title="Japanese">
+              日本語
+            </li>
+            <li data-lang="ko" title="Korean">
+              한국어
+            </li>
+            <li data-lang="pt-br" title="Portuguese, Brazilian">
+              Português do Brasil
+            </li>
+            <li data-lang="ru" title="Russian">
+              Русский
+            </li>
+            <li data-lang="uk" title="Ukrainian">
+              Українська
+            </li>
+            <li data-lang="zh-cn" title="Chinese Simplified">
+              中文(简体)
+            </li>
+            <li data-lang="zh-tw" title="Chinese Traditional">
+              中文(繁體)
+            </li>
+        </ul>
+      </div>
+  
+    </div>
+  </header>
+  <script type="text/javascript">
+    const langPickerElement = document.querySelector('.lang-picker')
+    const langElements = langPickerElement.querySelectorAll('li')
+    const langPickerTogglerElement = document.querySelector('#lang-picker-toggler')
+    
+    langElements.forEach(el => 
+      el.addEventListener('click', (e) => {
+        const newLocale =  (e.target && e.target.dataset && e.target.dataset.lang) || "en";
+        window.location.replace(window.location.pathname.replace(/\/[a-zA-Z-]+/, `/${newLocale}`))
+      })
+    )
+  
+    langPickerTogglerElement.addEventListener('click', () => {
+      langPickerElement.classList.toggle('hidden')
+    })
+  </script>
+
+  <div id="main">
+    <div class="container has-side-nav">
+
+      <aside>
+        <ul>
+                <li>
+                      <a href="https://nodejs.org/zh-cn/docs/">文档</a>
+                </li>
+                <li>
+                      <a href="https://nodejs.org/zh-cn/docs/es6/">ES6 及更高</a>
+                </li>
+                <li>
+                    <a href="https://nodejs.org/dist/latest-v10.x/docs/api">v10.16.0 API <span class="small color-lightgray">LTS</span></a>
+                </li>
+                <li>
+                    <a href="https://nodejs.org/dist/latest-v12.x/docs/api">v12.7.0 API</a>
+                </li>
+                <li>
+                      <a href="https://nodejs.org/zh-cn/docs/guides/">指南</a>
+                </li>
+                <li>
+                      <a href="https://nodejs.org/zh-cn/docs/meta/topics/dependencies/">依赖项</a>
+                </li>
+        </ul>
+      </aside>
+
+      <article>
+        <a class="edit-link" href="https://github.com/nodejs/nodejs.org/edit/master/locale/zh-cn/docs/guides/nodejs-docker-webapp.md">在 GitHub 上编辑</a> <h1 id="header-node-js-web-docker">把一个 Node.js web 应用程序给 Docker 化<a name="node-js-web-docker" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#node-js-web-docker" aria-labelledby="header-node-js-web-docker"></a></h1><p>本示例的目标是给你演示如何将一个 Node.js 的应用装入到 Docker 容器中。本教程旨在针对于开发人员，而 <em>非</em> 产品发布人员。此教程同样假定你有一个可以正常工作的 <a href="https://docs.docker.com/engine/installation/">Docker 安装</a>，并且对于 Node.js 的应用程序是如何组织的有一个大致的基本了解。</p>
+<p>在本教程的第一部分我们在 Node.js 中创建一个 Web 的应用程序，然后我们为那个应用构建一个 Docker 镜像；最后我们将把那个镜像作为容器运行之。</p>
+<p>Docker 允许你以应用程序所有的依赖全部打包成一个标准化的单元，这被成为一个容器。对于应用开发而言，一个容器就是一个蜕化到最基础的 Linux 操作系统。一个镜像是你加载到容器中的软件。</p>
+<h2 id="header-node-js">创建 Node.js 应用<a name="node-js" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#node-js" aria-labelledby="header-node-js"></a></h2><p>首先，创建一个新文件夹以便于容纳需要的所有文件，并且在此其中创建一个 <code>package.json</code> 文件，描述你应用程序以及需要的依赖：</p>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"docker_web_app"</span><span class="token punctuation">,</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"1.0.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Node.js on Docker"</span><span class="token punctuation">,</span>
+  <span class="token property">"author"</span><span class="token operator">:</span> <span class="token string">"First Last &lt;first.last@example.com&gt;"</span><span class="token punctuation">,</span>
+  <span class="token property">"main"</span><span class="token operator">:</span> <span class="token string">"server.js"</span><span class="token punctuation">,</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"start"</span><span class="token operator">:</span> <span class="token string">"node server.js"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"express"</span><span class="token operator">:</span> <span class="token string">"^4.16.1"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>配合着你的 <code>package.json</code> 请运行 <code>npm install</code>。如果你使用的 <code>npm</code> 是版本 5 或者之后的版本，这会自动生成一个 <code>package-lock.json</code> 文件，它将一起被拷贝进入你的 Docker 镜像中。</p>
+<p>然后，创建一个 <code>server.js</code> 文件，使用 <a href="https://expressjs.com/">Express.js</a> 框架定义一个 Web 应用：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token string">'use strict'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> express <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'express'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Constants</span>
+<span class="token keyword">const</span> <span class="token constant">PORT</span> <span class="token operator">=</span> <span class="token number">8080</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token constant">HOST</span> <span class="token operator">=</span> <span class="token string">'0.0.0.0'</span><span class="token punctuation">;</span>
+
+<span class="token comment">// App</span>
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">req<span class="token punctuation">,</span> res</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Hello world\n'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token constant">PORT</span><span class="token punctuation">,</span> <span class="token constant">HOST</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Running on http://</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token constant">HOST</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">:</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token constant">PORT</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>在稍后的步骤中我们将看一下借助使用官方的 Docker 镜像，你如何在 Docker 镜像中运行这个应用。首先，你需要一个构建一个应用程序的 Docker 应用。</p>
+<h2 id="header-dockerfile">创建一个名称为 <code>Dockerfile</code> 的文件<a name="dockerfile" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#dockerfile" aria-labelledby="header-dockerfile"></a></h2><p>创建一个空文件，命名为 <code>Dockerfile</code>：</p>
+<pre class="language-markup"><code class="language-markup">touch Dockerfile</code></pre>
+<p>用你最喜欢的文本编辑器打开这个 <code>Dockerfile</code>。</p>
+<p>我们要做的第一件事是定义我们需要从哪个镜像进行构建。这里我们将使用最新的 LTS（长期服务器支持版），<code>Node</code> 的版本号为 <code>10</code>。你可以从 <a href="https://hub.docker.com/">Docker 站点</a> 获取相关镜像：</p>
+<pre class="language-docker"><code class="language-docker"><span class="token keyword">FROM</span> node<span class="token punctuation">:</span>10</code></pre>
+<p>下一步在镜像中创建一个文件夹存放应用程序代码，这将是你的应用程序工作目录：</p>
+<pre class="language-docker"><code class="language-docker"><span class="token comment"># Create app directory</span>
+<span class="token keyword">WORKDIR</span> /usr/src/app</code></pre>
+<p>此镜像中 Node.js 和 NPM 都已经安装，所以下一件事对于我们而言是使用 <code>npm</code> 安装你的应用程序的所有依赖。请注意，如果你的 <code>npm</code> 的版本是 4 或者更早的版本，<code>package-lock.json</code> 文件将不会自动生成。</p>
+<pre class="language-docker"><code class="language-docker"><span class="token comment"># Install app dependencies</span>
+<span class="token comment"># A wildcard is used to ensure both package.json AND package-lock.json are copied</span>
+<span class="token comment"># where available (npm@5+)</span>
+<span class="token keyword">COPY</span> package*.json ./
+
+<span class="token keyword">RUN</span> npm install
+<span class="token comment"># If you are building your code for production</span>
+<span class="token comment"># RUN npm ci --only=production</span></code></pre>
+<p>请注意，我们只是拷贝了 <code>package.json</code> 文件而非整个工作目录。这允许我们利用缓存 Docker 层的优势。bitJudo 对此有一个很好的解释，请 <a href="http://bitjudo.com/blog/2014/03/13/building-efficient-dockerfiles-node-dot-js/">见此</a>。
+进一步说，对于生产环境而言，注释中提及的 <code>npm ci</code> 命令协助提供了一个更快、可靠、可再生的构建环境。欲知详情，可以参考<a href="https://blog.npmjs.org/post/171556855892/introducing-npm-ci-for-faster-more-reliable">此处</a>。</p>
+<p>在 Docker 镜像中使用 <code>COPY</code> 命令绑定你的应用程序：</p>
+<pre class="language-docker"><code class="language-docker"><span class="token comment"># Bundle app source</span>
+<span class="token keyword">COPY</span> . .</code></pre>
+<p>你的应用程序绑定的端口为 <code>8080</code>，所以你可以使用 <code>EXPOSE</code> 命令使它与 <code>docker</code> 的镜像做映射：</p>
+<pre class="language-docker"><code class="language-docker"><span class="token keyword">EXPOSE</span> 8080</code></pre>
+<p>最后但同样重要的事是，使用定义运行时的 <code>CMD</code> 定义命令来运行应用程序。这里我们使用最简单的 <code>npm start</code> 命令，它将运行 <code>node server.js</code> 启动你的服务器：</p>
+<pre class="language-docker"><code class="language-docker"><span class="token keyword">CMD</span> <span class="token punctuation">[</span> <span class="token string">"node"</span><span class="token punctuation">,</span> <span class="token string">"server.js"</span> <span class="token punctuation">]</span></code></pre>
+<p>你的 <code>Dockerfile</code> 现在看上去是这个样子：</p>
+<pre class="language-docker"><code class="language-docker"><span class="token keyword">FROM</span> node<span class="token punctuation">:</span>10
+
+<span class="token comment"># Create app directory</span>
+<span class="token keyword">WORKDIR</span> /usr/src/app
+
+<span class="token comment"># Install app dependencies</span>
+<span class="token comment"># A wildcard is used to ensure both package.json AND package-lock.json are copied</span>
+<span class="token comment"># where available (npm@5+)</span>
+<span class="token keyword">COPY</span> package*.json ./
+
+<span class="token keyword">RUN</span> npm install
+<span class="token comment"># If you are building your code for production</span>
+<span class="token comment"># RUN npm ci --only=production</span>
+
+<span class="token comment"># Bundle app source</span>
+<span class="token keyword">COPY</span> . .
+
+<span class="token keyword">EXPOSE</span> 8080
+<span class="token keyword">CMD</span> <span class="token punctuation">[</span> <span class="token string">"node"</span><span class="token punctuation">,</span> <span class="token string">"server.js"</span> <span class="token punctuation">]</span></code></pre>
+<h2 id="header-dockerignore">.dockerignore 文件<a name="dockerignore" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#dockerignore" aria-labelledby="header-dockerignore"></a></h2><p>在 <code>Dockerfile</code> 的同一个文件夹中创建一个 <code>.dockerignore</code> 文件，带有以下内容：</p>
+<pre><code>node_modules
+npm-debug.log</code></pre><p>这将避免你的本地模块以及调试日志被拷贝进入到你的 Docker 镜像中，以至于把你镜像原有安装的模块给覆盖了。</p>
+<h2 id="header-">构建你的镜像<a name="" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#" aria-labelledby="header-"></a></h2><p>进入到 <code>Dockerfile</code> 所在的那个目录中，运行以下命令构建 Docker 镜像。开关符 <code>-t</code> 让你标记你的镜像，以至于让你以后很容易地用 <code>docker images</code> 找到它。</p>
+<pre class="language-bash"><code class="language-bash">$ docker build -t <span class="token operator">&lt;</span>your username<span class="token operator">&gt;</span>/node-web-app <span class="token keyword">.</span></code></pre>
+<p>Docker 现在将给出你的镜像列表：</p>
+<pre class="language-bash"><code class="language-bash">$ docker images
+
+<span class="token comment"># Example</span>
+REPOSITORY                      TAG        ID              CREATED
+node                            8          1934b0b038d1    5 days ago
+<span class="token operator">&lt;</span>your username<span class="token operator">&gt;</span>/node-web-app    latest     d64d3505b0d2    1 minute ago</code></pre>
+<h2 id="header-">运行镜像<a name="" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#" aria-labelledby="header-"></a></h2><p>使用 <code>-d</code> 模式运行镜像将以分离模式运行 Docker 容器，使得容器在后台自助运行。开关符 <code>-p</code> 在容器中把一个公共端口导向到私有的端口，请用以下命令运行你之前构建的镜像：</p>
+<pre class="language-bash"><code class="language-bash">$ docker run -p 49160:8080 -d <span class="token operator">&lt;</span>your username<span class="token operator">&gt;</span>/node-web-app</code></pre>
+<p>把你应用程序的输出打印出来：</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># Get container ID</span>
+$ docker <span class="token function">ps</span>
+
+<span class="token comment"># Print app output</span>
+$ docker logs <span class="token operator">&lt;</span>container id<span class="token operator">&gt;</span>
+
+<span class="token comment"># Example</span>
+Running on http://localhost:8080</code></pre>
+<p>如果你需要进入容器中，请运行 <code>exec</code> 命令：</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># Enter the container</span>
+$ docker <span class="token function">exec</span> -it <span class="token operator">&lt;</span>container id<span class="token operator">&gt;</span> /bin/bash</code></pre>
+<h2 id="header-">测试<a name="" class="anchor" href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#" aria-labelledby="header-"></a></h2><p>为测试你的应用程序，给出与 Docker 映射过的端口号：</p>
+<pre class="language-bash"><code class="language-bash">$ docker <span class="token function">ps</span>
+
+<span class="token comment"># Example</span>
+ID            IMAGE                                COMMAND    <span class="token punctuation">..</span>.   PORTS
+ecce33b30ebf  <span class="token operator">&lt;</span>your username<span class="token operator">&gt;</span>/node-web-app:latest  <span class="token function">npm</span> start  <span class="token punctuation">..</span>.   49160-<span class="token operator">&gt;</span>8080</code></pre>
+<p>在上面的例子中，在容器中 Docker 把端口号 <code>8080</code> 映射到你机器上的 <code>49160</code> 。</p>
+<p>现在你可以使用 <code>curl</code>（如果需要的话请通过 <code>sudo apt-get install curl</code> 安装）调用你的程序了：</p>
+<pre class="language-bash"><code class="language-bash">$ <span class="token function">curl</span> -i localhost:49160
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: text/html<span class="token punctuation">;</span> charset<span class="token operator">=</span>utf-8
+Content-Length: 12
+ETag: W/<span class="token string">"c-M6tWOb/Y57lesdjQuHeB1P/qTV0"</span>
+Date: Mon, 13 Nov 2017 20:53:59 GMT
+Connection: keep-alive
+
+Hello world</code></pre>
+<p>我们希望本教程能够帮助你起步，在 Docker 中运行一个简单的 Node.js 应用程序。</p>
+<p>你也可以在以下一些地方寻觅到更多有关于 Docker 和基于 Docker 的 Node.js 相关内容：</p>
+<ul>
+<li><a href="https://hub.docker.com/_/node/">官方 Node.js 的 Docker 镜像</a></li>
+<li><a href="https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md">Node.js 基于 Docker 使用的最佳经验</a></li>
+<li><a href="https://docs.docker.com/">官方 Docker 文档</a></li>
+<li><a href="https://stackoverflow.com/questions/tagged/docker">在 StackOverFlow 上有关 Docker 标记内容</a></li>
+<li><a href="https://reddit.com/r/docker">Docker Subreddit</a></li>
+</ul>
+
+
+      </article>
+
+    </div>
+  </div>
+
+  <a href="https://nodejs.org/zh-cn/docs/guides/nodejs-docker-webapp/#" id="scroll-to-top" style="display: block;">↑ <span>回到页顶</span></a>
+  
+  <footer role="contentinfo">
+  
+    <div class="container">
+      <div class="linuxfoundation-footer">
+        <div class="issue-link-container">
+          <a class="linuxfoundation-logo" href="http://collabprojects.linuxfoundation.org/">
+            <img alt="Linux Foundation Collaborative Projects" src="./docker_build_nodejs_files/lfcp.png">
+          </a>
+          <ul class="list-divider-pipe issue-link">
+            <li><a href="https://github.com/nodejs/node/issues">报告 Node.js 问题 </a></li>
+            <li><a href="https://github.com/nodejs/nodejs.org/issues">报告网站问题</a></li>
+            <li><a href="https://github.com/nodejs/help/issues">获取帮助</a></li>
+          </ul>
+        </div>
+  
+        <p>© Node.js Foundation. All Rights Reserved. Portions of this site originally © Joyent. </p>
+        <p>Node.js is a trademark of Joyent, Inc. and is used with its permission. Please review the <a href="https://nodejs.org/static/documents/trademark-policy.pdf">Trademark Guidelines of the Node.js Foundation</a>.</p>
+        <p>Linux Foundation is a registered trademark of The Linux Foundation.</p>
+        <p>Linux is a registered <a href="http://www.linuxfoundation.org/programs/legal/trademark" title="Linux Mark Institute">trademark</a> of Linus Torvalds.</p>
+        <p>
+          <a href="https://raw.githubusercontent.com/nodejs/node/master/LICENSE">Node.js Project Licensing Information</a>.
+        </p>
+      </div>
+    </div>
+  
+  </footer>
+  
+  <link rel="stylesheet" href="./docker_build_nodejs_files/prism-tomorrow.css" media="all">
+  <script type="text/javascript">
+    var $scrollToTop = document.getElementById('scroll-to-top');
+    (window.onscroll = function() {
+      window.requestAnimationFrame(function() {
+        $scrollToTop.style.display = (window.pageYOffset > window.innerHeight) ? 'block' : 'none';
+      })
+    })();
+    $scrollToTop.onclick = function() {
+      window.scrollTo(0, 0);
+      return false;
+    };
+  </script>
+  
+  <script>
+    (function(d,e,m,s){
+      if (!/(MSIE|Trident)/.test(navigator.userAgent)){return;}
+      m=d.createElement(e);
+      s=d.getElementsByTagName(e)[0];m.async=1;m.src='/static/js/modernizr.custom.js';
+      m.onload=function(){Modernizr.addTest('flexboxtweener', Modernizr.testAllProps('flexAlign'));};
+      s.parentNode.insertBefore(m,s);
+    })(document,'script');
+  </script>
+
+
+</body></html>

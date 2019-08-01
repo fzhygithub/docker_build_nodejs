@@ -18,7 +18,7 @@ You can initialize this repository with code from a Subversion, Mercurial, or TF
 
 
 
-docker load -i node:10.tgz
+docker load -i node10.tgz
 
 
 
