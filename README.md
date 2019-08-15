@@ -1,3 +1,4 @@
+```
 https://github.com/fzhygithub/docker_build_nodejs.git
 
 
@@ -46,3 +47,4 @@ CMD [ "node", "server.js" ]
 # docker build -t nodejs:latest . --no-cache
 # docker run -p 32002:8080 -d nodejs:latest
 # curl -i localhost:32002
+```
